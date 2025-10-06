@@ -10,8 +10,8 @@ Solve linear systems with the HHL (Harrow–Hassidim–Lloyd) quantum algorithm 
 - A clean, minimal implementation using modern Qiskit primitives (statevector resources).
 - Explicit construction of controlled-U gates by exponentiating a Hermitian A with SciPy and wrapping as Qiskit unitaries.
 - A recursive, gate-level QFT and inverse QFT that matches QPE requirements.
-- A controlled R_y rotation schedule matched to eigenvalues that are powers of two for a simple, exact path.
-- Validation blocks that prove cU followed by its inverse is identity, QFT correctness on basis states, and correctness of the reconstructed solution |x⟩.
+- A controlled $R_y$ rotation schedule matched to eigenvalues that are powers of two for a simple, exact path.
+- Validation blocks that prove cU followed by its inverse is identity, QFT correctness on basis states, and correctness of the reconstructed solution $|x\rangle$.
 - Probability-of-success estimation for the ancilla measurement and histogram sampling.
 
 ## Visual overview 🖼️
@@ -27,23 +27,39 @@ Solve linear systems with the HHL (Harrow–Hassidim–Lloyd) quantum algorithm 
 ## Techniques and algorithmic highlights 🔍
 
 - Quantum Phase Estimation (QPE), inverse QPE, and eigenvalue encoding:
+  
+  $$U = e^{i\, 2\pi \frac{A}{2^m}}$$
+  
+  $$QFT^{\dagger} \ , |k\rangle = \frac{1}{\sqrt{2^m}} \sum_{j=0}^{2^m-1} e^{-i \ , 2\pi \frac{k j}{2^m}} \ , |j\rangle$$
+  
   - QFT implementation with controlled phase rotations (Qiskit: [QuantumCircuit.cp](https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit#cp))
   - Inverse via circuit inversion and reverse application
-- Gate-level QFT on m qubits (recursive):
-  - Uses controlled phase angles π/2^(k) and register swaps
+
+- Gate-level QFT on $m$ qubits (recursive):
+  - Uses controlled phase angles $\pi/2^{(k)}$ and register swaps
   - Related reference: Qiskit’s Fourier transforms (docs: [QFT circuit](https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.library.QFT))
-- Constructing controlled-U^(2^i) from a Hermitian A:
-  - Matrix exponential U = exp(i 2π A / 2^m) and powers via scaling in the exponent
-  - SciPy: [scipy.linalg.expm](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.expm.html)
+
+- Constructing controlled-$U^{2^i}$ from a Hermitian $A$:
+  
+  $$U = e^{i\, 2\pi \frac{A}{2^m}}, \qquad U^{2^i} = e^{i\, 2\pi \frac{A \cdot 2^i}{2^m}}$$
+  
+  - Matrix exponential via SciPy: [scipy.linalg.expm](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.expm.html)
   - Wrapped as Qiskit unitaries: [UnitaryGate](https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.library.UnitaryGate)
-- Controlled R_y(θ) rotations for the 1/λ factor:
+
+- Controlled $R_y(\theta)$ rotations for the $1/\lambda$ factor:
+  
+  $$R\big(|0\rangle \otimes |\lambda\rangle\big) = \Big(\sqrt{1 - \tfrac{1}{\lambda^2}}\,|0\rangle + \tfrac{1}{\lambda}\,|1\rangle\Big) \otimes |\lambda\rangle$$
+  
   - Qiskit: [QuantumCircuit.cry](https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit#cry)
+
 - Simulation and sampling:
   - Modern primitives: [StatevectorSampler](https://docs.quantum.ibm.com/api/qiskit/qiskit.primitives.StatevectorSampler)
   - Visualization: [plot_histogram](https://docs.quantum.ibm.com/api/qiskit/qiskit.visualization.plot_histogram)
+
 - Statevector math and validation:
   - Operator checks via [qiskit.quantum_info.Operator](https://docs.quantum.ibm.com/api/qiskit/qiskit.quantum_info.Operator)
   - Numerical checks with NumPy: [numpy.linalg](https://numpy.org/doc/stable/reference/routines.linalg.html)
+
 - Qubit endianness and register layout awareness:
   - Qiskit’s bit order is little-endian; the notebook calls this out when mapping memory/ancilla/output registers. See Qiskit’s note on [classical/quantum bit ordering](https://docs.quantum.ibm.com/guides/circuit-tracing-and-dag#endianness).
 
@@ -70,13 +86,13 @@ Where MDN fits (if you’re coming from the web world): this project doesn’t u
 ## Development highlights 🛠️
 
 - [com-308-project_empty.ipynb](./com-308-project_empty.ipynb) builds the HHL stack in stages:
-  - Hadamard layer H⊗m
-  - Controlled-U^(2^i) and its inverse from exp(i 2π A / 2^m)
-  - QFT and QFT† (gate-level, not using the library QFT except for comparison)
-  - Controlled R_y schedule tuned for λ = 2^i
-  - Assembly into HHL, with correctness checks for identity, QFT mapping, and |x⟩ extraction
+  - Hadamard layer $H^{\otimes m}$
+  - Controlled-$U^{2^i}$ and its inverse from $e^{i \ , 2\pi A / 2^m}$
+  - $QFT$ and $QFT^{\dagger}$ (gate-level, not using the library QFT except for comparison)
+  - Controlled $R_y$ schedule tuned for $\lambda = 2^i$
+  - Assembly into HHL, with correctness checks for identity, QFT mapping, and $|x\rangle$ extraction
   - Sampler-based probability estimates and histogram plots
-  - Notes on bit order, register layout, and how to slice amplitudes to extract |x⟩
+  - Notes on bit order, register layout, and how to slice amplitudes to extract $|x\rangle$
 - Circuit visuals: [circuit.png](./circuit.png), [qpe.png](./qpe.png)
 - Project write-ups: [HHL_project.pdf](./HHL_project.pdf), [Projet IQC.pdf](./Projet%20IQC.pdf)
 
