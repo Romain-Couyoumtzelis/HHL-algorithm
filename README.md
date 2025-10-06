@@ -39,7 +39,7 @@ Solve linear systems with the HHL (Harrow–Hassidim–Lloyd) quantum algorithm 
   - Uses controlled phase angles $\pi/2^{(k)}$ and register swaps
   - Related reference: Qiskit’s Fourier transforms (docs: [QFT circuit](https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.library.QFT))
 
-- Constructing controlled-$$U^{2^i}$$ from a Hermitian $A$:
+- Constructing controlled- $U^{2^i}$ from a Hermitian $A$:
   
   $$U = e^{i\, 2\pi \frac{A}{2^m}}, \qquad U^{2^i} = e^{i\, 2\pi \frac{A \cdot 2^i}{2^m}}$$
   
@@ -87,7 +87,7 @@ Where MDN fits (if you’re coming from the web world): this project doesn’t u
 
 - [com-308-project_empty.ipynb](./com-308-project_empty.ipynb) builds the HHL stack in stages:
   - Hadamard layer $H^{\otimes m}$
-  - Controlled-$$U^{2^i}$$ and its inverse from $e^{i \ , 2\pi A / 2^m}$
+  - Controlled- $U^{2^i}$ and its inverse from $e^{i \ , 2\pi A / 2^m}$
   - $QFT$ and $QFT^{\dagger}$ (gate-level, not using the library QFT except for comparison)
   - Controlled $R_y$ schedule tuned for $\lambda = 2^i$
   - Assembly into HHL, with correctness checks for identity, QFT mapping, and $|x\rangle$ extraction
